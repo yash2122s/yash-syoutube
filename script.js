@@ -74,7 +74,7 @@ function updateDarkModeIcon(theme) {
 // Initialize dark mode
 document.addEventListener('DOMContentLoaded', initDarkMode);
 
-const API_URL = 'https://your-backend-url.render.com';
+const API_URL = 'https://yash-youtube.onrender.com';
 
 async function loadVideos() {
     try {
@@ -85,7 +85,7 @@ async function loadVideos() {
         videosGrid.innerHTML = videos.map(video => `
             <div class="video-card">
                 <video controls>
-                    <source src="http://localhost:3000/${video.filename}" type="video/mp4">
+                    <source src="${API_URL}/${video.filename}" type="video/mp4">
                 </video>
                 <div class="video-info">
                     <h3>${video.title}</h3>
@@ -109,10 +109,15 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     formData.append('video', document.getElementById('videoFile').files[0]);
 
     try {
-        const response = await fetch('http://localhost:3000/api/upload', {
+        const response = await fetch(`${API_URL}/api/upload`, {
             method: 'POST',
             body: formData
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const result = await response.json();
         
         if (result.success) {
@@ -124,7 +129,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
         }
     } catch (error) {
         console.error('Error uploading video:', error);
-        alert('Upload failed!');
+        alert('Upload failed: ' + error.message);
     }
 });
 
