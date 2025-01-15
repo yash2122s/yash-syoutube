@@ -56,15 +56,28 @@ const upload = multer({
 // Routes
 app.post('/api/upload', upload.single('video'), async (req, res) => {
     try {
+        if (!req.file) {
+            throw new Error('No video file uploaded');
+        }
+
         const video = new Video({
-            title: req.body.title,
-            description: req.body.description,
+            title: req.body.title || 'Untitled',
+            description: req.body.description || '',
             filename: req.file.filename
         });
+
         await video.save();
-        res.json({ success: true, video });
+        res.json({ 
+            success: true, 
+            video,
+            message: 'Video uploaded successfully' 
+        });
     } catch (error) {
-        res.status(400).json({ success: false, error: error.message });
+        console.error('Upload error:', error);
+        res.status(400).json({ 
+            success: false, 
+            error: error.message 
+        });
     }
 });
 

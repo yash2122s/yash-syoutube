@@ -103,33 +103,49 @@ async function loadVideos() {
 document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const formData = new FormData();
-    formData.append('title', document.getElementById('videoTitle').value);
-    formData.append('description', document.getElementById('videoDescription').value);
-    formData.append('video', document.getElementById('videoFile').files[0]);
-
     try {
-        const response = await fetch(`${API_URL}/api/upload`, {
+        const formData = new FormData();
+        const title = document.getElementById('videoTitle').value;
+        const description = document.getElementById('videoDescription').value;
+        const videoFile = document.getElementById('videoFile').files[0];
+
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('video', videoFile);
+
+        console.log('Uploading:', { title, description, fileName: videoFile.name });
+
+        const response = await fetch('https://yash-youtube.onrender.com/api/upload', {
             method: 'POST',
-            body: formData
+            body: formData,
         });
+
+        console.log('Response status:', response.status);
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Upload failed: ${errorText}`);
         }
-        
+
         const result = await response.json();
         
         if (result.success) {
             alert('Video uploaded successfully!');
-            loadVideos(); // Reload videos
-            e.target.reset(); // Clear form
+            location.reload(); // Reload the page to show new video
         } else {
-            alert('Upload failed: ' + result.error);
+            throw new Error(result.error || 'Upload failed');
         }
     } catch (error) {
-        console.error('Error uploading video:', error);
-        alert('Upload failed: ' + error.message);
+        console.error('Upload error:', error);
+        alert(`Upload failed: ${error.message}`);
+    }
+});
+
+// Add this to check if form exists
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('uploadForm');
+    if (!form) {
+        console.error('Upload form not found!');
     }
 });
 

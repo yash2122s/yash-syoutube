@@ -361,7 +361,8 @@ body {
 }
 
 .upload-section {
-    margin-bottom: 30px;
+    max-width: 600px;
+    margin: 20px auto;
     padding: 20px;
     background-color: var(--background-color);
     border-radius: 8px;
@@ -390,6 +391,10 @@ body {
     border: none;
     border-radius: 20px;
     cursor: pointer;
+}
+
+.upload-section button:hover {
+    background-color: #0056bf;
 }
 
 .videos-grid {
