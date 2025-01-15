@@ -76,6 +76,12 @@ document.addEventListener('DOMContentLoaded', initDarkMode);
 
 const API_URL = 'https://yash-youtube.onrender.com';
 
+// Add this to test the connection
+fetch(`${API_URL}/test`)
+    .then(response => response.json())
+    .then(data => console.log('Server test:', data))
+    .catch(error => console.error('Server test error:', error));
+
 async function loadVideos() {
     try {
         const response = await fetch(`${API_URL}/api/videos`);
@@ -109,29 +115,29 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
         const description = document.getElementById('videoDescription').value;
         const videoFile = document.getElementById('videoFile').files[0];
 
+        if (!videoFile) {
+            throw new Error('Please select a video file');
+        }
+
         formData.append('title', title);
         formData.append('description', description);
         formData.append('video', videoFile);
 
-        console.log('Uploading:', { title, description, fileName: videoFile.name });
+        console.log('Starting upload...');
 
-        const response = await fetch('https://yash-youtube.onrender.com/api/upload', {
+        const response = await fetch(`${API_URL}/api/upload`, {
             method: 'POST',
-            body: formData,
+            body: formData
         });
 
-        console.log('Response status:', response.status);
+        console.log('Upload response status:', response.status);
         
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Upload failed: ${errorText}`);
-        }
-
         const result = await response.json();
-        
+        console.log('Upload result:', result);
+
         if (result.success) {
             alert('Video uploaded successfully!');
-            location.reload(); // Reload the page to show new video
+            location.reload();
         } else {
             throw new Error(result.error || 'Upload failed');
         }

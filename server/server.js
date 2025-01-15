@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -9,18 +8,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.static('uploads'));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB Atlas'))
-    .catch(err => console.error('Could not connect to MongoDB:', err));
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
 // Video Schema
 const videoSchema = new mongoose.Schema({
@@ -33,29 +28,32 @@ const videoSchema = new mongoose.Schema({
 
 const Video = mongoose.model('Video', videoSchema);
 
-// Multer configuration for video uploads
+// Multer configuration
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'uploads/');
     },
     filename: function(req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, Date.now() + '-' + file.originalname);
     }
 });
 
 const upload = multer({ 
     storage: storage,
-    fileFilter: function(req, file, cb) {
-        if (!file.originalname.match(/\.(mp4|webm)$/)) {
-            return cb(new Error('Only video files are allowed!'));
-        }
-        cb(null, true);
+    limits: {
+        fileSize: 100 * 1024 * 1024 // 100MB limit
     }
 });
 
 // Routes
+app.get('/test', (req, res) => {
+    res.json({ message: 'Server is working!' });
+});
+
 app.post('/api/upload', upload.single('video'), async (req, res) => {
     try {
+        console.log('Upload request received:', req.body);
+        
         if (!req.file) {
             throw new Error('No video file uploaded');
         }
@@ -67,6 +65,8 @@ app.post('/api/upload', upload.single('video'), async (req, res) => {
         });
 
         await video.save();
+        console.log('Video saved:', video);
+
         res.json({ 
             success: true, 
             video,
@@ -86,8 +86,18 @@ app.get('/api/videos', async (req, res) => {
         const videos = await Video.find().sort({ uploadDate: -1 });
         res.json(videos);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error('Error fetching videos:', error);
+        res.status(500).json({ error: error.message });
     }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ 
+        success: false, 
+        error: 'Something broke on the server!' 
+    });
 });
 
 app.listen(PORT, () => {
