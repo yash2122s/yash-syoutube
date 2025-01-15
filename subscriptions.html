@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriptions - Video Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="left-section">
+            <svg viewBox="0 0 90 20" width="90" height="20">
+                <!-- Same YouTube logo SVG as index.html -->
+            </svg>
+        </div>
+        <div class="center-section">
+            <div class="search-bar">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search">
+                    <div class="search-icon-container">
+                        <button id="searchBtn">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M20.87,20.17l-5.59-5.59C16.35,13.35,17,11.75,17,10c0-3.87-3.13-7-7-7s-7,3.13-7,7s3.13,7,7,7c1.75,0,3.35-0.65,4.58-1.71 l5.59,5.59L20.87,20.17z M10,16c-3.31,0-6-2.69-6-6s2.69-6,6-6s6,2.69,6,6S13.31,16,10,16z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="app">
+        <!-- Sidebar will be included here -->
+        <div id="sidebar-placeholder"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1>Subscriptions</h1>
+            <div class="channel-grid">
+                <div class="channel-card">
+                    <img src="https://via.placeholder.com/100" alt="Channel 1">
+                    <h3>Tech Channel</h3>
+                    <p>1.2M subscribers</p>
+                </div>
+                <div class="channel-card">
+                    <img src="https://via.placeholder.com/100" alt="Channel 2">
+                    <h3>Music Channel</h3>
+                    <p>890K subscribers</p>
+                </div>
+                <div class="channel-card">
+                    <img src="https://via.placeholder.com/100" alt="Channel 3">
+                    <h3>Gaming Channel</h3>
+                    <p>2.5M subscribers</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        fetch('components/sidebar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('sidebar-placeholder').innerHTML = data;
+                document.getElementById('subscriptions').classList.add('active');
+            });
+    </script>
+</body>
+</html>

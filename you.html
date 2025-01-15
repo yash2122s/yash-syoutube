@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Channel - Video Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <!-- Same header as above -->
+    </header>
+
+    <div class="app">
+        <div id="sidebar-placeholder"></div>
+
+        <div class="main-content">
+            <div class="channel-header">
+                <img src="https://via.placeholder.com/100" alt="Channel avatar" class="channel-avatar">
+                <div class="channel-info">
+                    <h1>Your Channel</h1>
+                    <p>0 subscribers</p>
+                </div>
+            </div>
+            
+            <div class="channel-tabs">
+                <button class="tab active">Videos</button>
+                <button class="tab">Playlists</button>
+                <button class="tab">About</button>
+            </div>
+
+            <div class="your-videos">
+                <p class="empty-state">No videos yet. Create and share your first video!</p>
+                <button class="upload-btn">Upload Video</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        fetch('components/sidebar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('sidebar-placeholder').innerHTML = data;
+                document.getElementById('you').classList.add('active');
+            });
+    </script>
+</body>
+</html>
